@@ -1,13 +1,22 @@
-import React from 'react'
-import Navbar from './components/Navbar'
-import { Route, Routes } from 'react-router'
-import Footer from './components/Footer'
+import React, { useEffect } from 'react'
+import Navbar from './components/common/Navbar'
+import { Route, Routes, useLocation} from 'react-router'
+import Footer from './components/common/Footer'
 import NotFound from './pages/NotFound'
 import HomePage from './pages/HomePage'
+
+function ScrollToTop() {
+  const { pathName } = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top : 0 });
+  }, [{pathName}]);
+}
+
 
 function App() {
   return (
     <div className="min-h-screen border-2 border-black flex flex-col bg-[#FAF9F5] text-stone-900 selection:bg-orange-200 selection:text-red-900">
+      <ScrollToTop />
       <Navbar />
       <div className='flex-1'>
         <Routes>
