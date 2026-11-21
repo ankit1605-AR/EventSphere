@@ -20,7 +20,9 @@ const favoriteSlice = createSlice({
             }
         },
         removeFavorites(state) { },
-        clearFavorites(state) { },
+        clearFavorites(state) { 
+            state.items = []
+        },
     },
 });
 
