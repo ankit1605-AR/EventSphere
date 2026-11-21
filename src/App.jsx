@@ -6,6 +6,7 @@ import NotFound from './pages/NotFound'
 import HomePage from './pages/HomePage'
 import EventDetailsPage from './pages/EventDetailsPage'
 import { Toaster } from 'sonner'
+import FavoritesPage from './pages/FavoritesPage'
 
 function ScrollToTop() {
   const { pathName } = useLocation();
@@ -24,6 +25,7 @@ function App() {
         <Routes>
           <Route path='/' element={<HomePage />} />
           <Route path='/events/:slug' element={<EventDetailsPage />} />
+          <Route path='/favorites' element={<FavoritesPage />} />
           <Route path='*' element={<NotFound />} />
         </Routes>
       </div>

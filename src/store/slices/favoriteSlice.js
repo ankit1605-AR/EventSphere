@@ -3,11 +3,21 @@ import { createSlice } from "@reduxjs/toolkit";
 const favoriteSlice = createSlice({
     name: "favorites",
     initialState: {
-        name: "rahul",
+        items: []
     },
     reducers: {
         toggleFavorites(state, action) {
-            state.name = action.payload;
+            const event = action.payload;
+            const existingEvent = state.items.find((e) =>
+                (e.id || e._id) === (event.id || event._id),
+            );
+            if (existingEvent) {
+                state.items = state.items.filter((e) =>
+                    (e.id || e._id) !== (event.id || event._id),
+                );
+            } else {
+                state.items.push(action.payload);
+            }
         },
         removeFavorites(state) { },
         clearFavorites(state) { },
