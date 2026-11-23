@@ -1,16 +1,43 @@
 import { useEventFilters } from "@/hooks/useEventFilters";
+import api from "@/lib/axios";
+import { useEffect, useMemo, useState } from "react";
 
 export default function EventFilterBar() {
-  
-  const { updateParams, searchParams, filters } = useEventFilters();
-  
+  const { updateParams, filters } = useEventFilters();
+  const [categories, setCategories] = useState([]);
+  const [isCategoriesLoading, setIsCategoriesLoading] = useState(true);
+
+
   function handleFormatChange(format) {
     updateParams({ format })
   }
   function handleIsPaid(entry) {
     updateParams({ isPaid: entry });
   }
-  const activeFormat = searchParams.get("format") || filters.format;
+
+  async function fetchCategories() {
+    setIsCategoriesLoading(true);
+    try {
+      let { data } = await api.get("/api/categories");
+      setCategories(data);
+    } catch (error) { }
+    setIsCategoriesLoading(false);
+  }
+
+  useEffect(() => {
+    fetchCategories();
+  }, [])
+
+  const activeFormat = filters.format;
+  const activeCategory = filters.category;
+
+  const totalCategoryEvent = useMemo(() => {
+    // console.log("calculation....");
+    return categories.reduce((acc, currVal) => {
+      acc += currVal.eventCount;
+      return acc;
+    }, 0);
+  }, [categories]);
 
 
   return (
@@ -125,73 +152,54 @@ export default function EventFilterBar() {
         {/* All Disciplines Pill */}
         <button
           type="button"
-          className="px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer flex items-center gap-1.5 bg-[#1a1a1a] text-white shadow-sm"
+          onClick={() => updateParams({ category: "" })}
+          className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer flex items-center gap-1.5 ${activeCategory === ""
+            ? "bg-stone-800 text-white border-stone-800"
+            : "bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"
+            }`}
         >
-          <span>All Disciplines</span>
-          <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-white/20 text-white">
-            42
-          </span>
+          <span>All Category</span>
+          {!isCategoriesLoading && (
+            <span
+              className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-stone-100 text-stone-500 ${activeCategory === ""
+                ? "bg-white/20 text-white"
+                : "bg-stone-100 text-stone-600"
+                }`}
+            >
+              {totalCategoryEvent}
+            </span>
+          )}
         </button>
 
-        <button
-          type="button"
-          className="px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer flex items-center gap-1.5 bg-white hover:bg-stone-100 text-stone-600 border border-[#E2DFD4]"
-        >
-          <span>Technology & AI</span>
-          <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-stone-100 text-stone-500">
-            14
-          </span>
-        </button>
+        {isCategoriesLoading
+          ? [...Array(5)].map((_, i) => (
+            <div
+              key={i}
+              className="h-8 w-24 rounded-full bg-stone-200 animate-pulse shrink-0"
+            />
+          ))
+          : categories.map((cat) => (
+            <button
+              key={cat._id || cat.id}
+              type="button"
+              onClick={() => updateParams({ category: cat.name })}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer flex items-center gap-1.5 ${activeCategory === cat.name
+                  ? "bg-stone-800 text-white border-stone-800"
+                  : "bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"
+                }`}
+            >
+              <span>{cat.name}</span>
+              <span
+                className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-stone-100 text-stone-500 ${activeCategory === cat.name
+                    ? "bg-white/20 text-white"
+                    : "bg-stone-100 text-stone-600"
+                  }`}
+              >
+                {cat.eventCount || 0}
+              </span>
+            </button>
+          ))}
 
-        <button
-          type="button"
-          className="px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer flex items-center gap-1.5 bg-white hover:bg-stone-100 text-stone-600 border border-[#E2DFD4]"
-        >
-          <span>Live Music & Concerts</span>
-          <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-stone-100 text-stone-500">
-            9
-          </span>
-        </button>
-
-        <button
-          type="button"
-          className="px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer flex items-center gap-1.5 bg-white hover:bg-stone-100 text-stone-600 border border-[#E2DFD4]"
-        >
-          <span>Startups & Venture Capital</span>
-          <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-stone-100 text-stone-500">
-            8
-          </span>
-        </button>
-
-        <button
-          type="button"
-          className="px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer flex items-center gap-1.5 bg-white hover:bg-stone-100 text-stone-600 border border-[#E2DFD4]"
-        >
-          <span>Fitness & Marathons</span>
-          <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-stone-100 text-stone-500">
-            5
-          </span>
-        </button>
-
-        <button
-          type="button"
-          className="px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer flex items-center gap-1.5 bg-white hover:bg-stone-100 text-stone-600 border border-[#E2DFD4]"
-        >
-          <span>Arts & Culture</span>
-          <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-stone-100 text-stone-500">
-            4
-          </span>
-        </button>
-
-        <button
-          type="button"
-          className="px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer flex items-center gap-1.5 bg-white hover:bg-stone-100 text-stone-600 border border-[#E2DFD4]"
-        >
-          <span>Workshops & Masterclasses</span>
-          <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-stone-100 text-stone-500">
-            2
-          </span>
-        </button>
       </div>
 
       {/* Format & Pricing Pills */}
@@ -239,8 +247,8 @@ export default function EventFilterBar() {
             type="button"
             onClick={() => handleIsPaid(true)} // ispaid == true
             className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-all cursor-pointer ${filters.isPaid === true
-                ? "bg-stone-800 text-white border-stone-800"
-                : "bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"
+              ? "bg-stone-800 text-white border-stone-800"
+              : "bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"
               }`}
           >
             Paid
