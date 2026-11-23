@@ -1,31 +1,13 @@
-import { setIsPaid, setFormat } from "@/store/slices/filterSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { useSearchParams } from "react-router";
+import { useEventFilters } from "@/hooks/useEventFilters";
 
 export default function EventFilterBar() {
-  const dispatch = useDispatch();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const filters = useSelector((state) => state.filters);
-
-  function updateParams(updates) {
-    const params = new URLSearchParams(searchParams);
-    Object.entries(updates).forEach(([key, val]) => {
-      if (val !== undefined && val !== "" && val !== null) {
-        params.set(key, String(val));
-      } else {
-        params.delete(key);
-      }
-    });
-    setSearchParams(params);
-  }
-
-
+  
+  const { updateParams, searchParams, filters } = useEventFilters();
+  
   function handleFormatChange(format) {
-    dispatch(setFormat(format));
     updateParams({ format })
   }
   function handleIsPaid(entry) {
-    dispatch(setIsPaid(entry));
     updateParams({ isPaid: entry });
   }
   const activeFormat = searchParams.get("format") || filters.format;
