@@ -26,7 +26,9 @@ export default function ExplorePage() {
     } else {
       setIsLoadingMore(true);
     }
-    let str = `${apiQueryString()}&page=${page}`;
+    // let str = `${apiQueryString()}&page=${page}`;
+
+    let str = [`${apiQueryString()}`, `page=${page}`].filter(Boolean).join("&");
 
     try {
       const { data: events, pagination } = await api.get(
@@ -49,7 +51,7 @@ export default function ExplorePage() {
   }
 
   useEffect(() => {
-    fetchEvents(1,false);
+    fetchEvents(1, false);
   }, [filters]);
 
   const { ref: observerRef, inView } = useInView({
