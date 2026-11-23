@@ -31,10 +31,10 @@ export default function EventDetailsPage() {
         async function fetchEvent() {
             setIsLoading(true);
             try {
-                let data = await api.get(`/api/events/${slug}`);
+                let { data } = await api.get(`/api/events/${slug}`);
                 setEvent(data);
 
-                let reviews = await api.get(`/api/events/${data.id || data._id}/reviews`);
+                let { data: reviews } = await api.get(`/api/events/${data.id || data._id}/reviews`);
                 setReviews(reviews);
             } catch (error) { }
 
@@ -90,8 +90,8 @@ export default function EventDetailsPage() {
                         type="button"
                         onClick={(e) => handleFavorite(e, event, dispatch, isFavorite)}
                         className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium transition-all cursor-pointer ${isFavorite
-                                ? "bg-orange-50 border-orange-200 text-[#E65100]"
-                                : "bg-white border-[#DDD9CE] hover:bg-stone-50 text-stone-700"
+                            ? "bg-orange-50 border-orange-200 text-[#E65100]"
+                            : "bg-white border-[#DDD9CE] hover:bg-stone-50 text-stone-700"
                             }`}
                     >
                         <Bookmark

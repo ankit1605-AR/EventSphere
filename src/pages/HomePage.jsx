@@ -100,7 +100,7 @@ export default function Home() {
     async function loadHomePage() {
       setIsLoading(true)
       try {
-        let data = await api.get(
+        let {data} = await api.get(
           "/api/events/featured",
         );
         // console.log(data);
@@ -108,7 +108,7 @@ export default function Home() {
       } catch (error) { }
 
       try {
-        let data = await api.get(
+        let {data} = await api.get(
           "/api/categories",
         );
         // console.log(data);
@@ -116,7 +116,7 @@ export default function Home() {
       } catch (error) { }
 
       try {
-        let data = await api.get(
+        let {data} = await api.get(
           "/api/events?limit=8&sort=startDate&order=asc",
         );
         setTrendingEvents(data);
