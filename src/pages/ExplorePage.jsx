@@ -2,7 +2,7 @@ import Skeleton from '@/components/common/Skeleton';
 import EventCard from '@/components/events/EventCard';
 import EventFilterBar from '@/components/events/EventFilterBar';
 import api from '@/lib/axios';
-import { setFormat } from '@/store/slices/filterSlice';
+import { setFormat, setIsPaid } from '@/store/slices/filterSlice';
 import { useEffect, useRef, useState } from 'react';
 import { useInView } from "react-intersection-observer"
 import { useDispatch, useSelector } from 'react-redux';
@@ -23,11 +23,6 @@ export default function ExplorePage() {
   const dispatch = useDispatch();
   const activeRequestId = useRef(0);
 
-  const { ref: observerRef, inView } = useInView({
-    threshold: 0.5,
-  });
-
-
 
   async function fetchEvents(page = 1, append = false) {
     const thisRequestId = ++activeRequestId.current;
@@ -41,6 +36,10 @@ export default function ExplorePage() {
     params.set("page", page);
     if (filters.format) {
       params.set("format", filters.format);
+    }
+
+    if (filters.isPaid !== "") {
+      params.set("isPaid", String(filters.isPaid));
     }
 
     try {
@@ -64,17 +63,28 @@ export default function ExplorePage() {
   }
   useEffect(() => {
     const urlFormat = searchParams.get("format");
+    const urlIsPaid = searchParams.get("isPaid");
 
     if (urlFormat) {
       dispatch(setFormat(urlFormat));
     } else {
       dispatch(setFormat(""));
     }
+
+    if (urlIsPaid !== "" && urlIsPaid !== null) {
+      dispatch(setIsPaid(urlIsPaid === "true" ? true : false));
+    } else {
+      dispatch(setIsPaid(""));
+    }
   }, [searchParams, dispatch]);
 
   useEffect(() => {
     fetchEvents();
-  }, [filters.format])
+  }, [filters.format, filters.isPaid]);
+
+  const { ref: observerRef, inView } = useInView({
+    threshold: 0.5,
+  });
 
   useEffect(() => {
     if (inView && pagination.hasMore && !isLoading && !isLoadingMore) {
