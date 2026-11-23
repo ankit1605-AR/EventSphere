@@ -1,8 +1,25 @@
 import { setFormat } from "@/store/slices/filterSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useSearchParams } from "react-router";
 
 export default function EventFilterBar() {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const filters = useSelector((state) => state.filters);
+
+  function handleFormatChange(format) {
+    dispatch(setFormat(format));
+    const params = new URLSearchParams();
+    if (format) {
+      params.set("format", format);
+    } else {
+      params.delete("format");
+    }
+    setSearchParams(params);
+  }
+
+  const activeFormat = searchParams.get("format") || filters.format;
+
   return (
     <div className="space-y-4">
       {/* Top Search & Primary Filters Row */}
@@ -192,10 +209,13 @@ export default function EventFilterBar() {
             <button
               key={i}
               type="button"
-              onClick={() => dispatch(setFormat(f))}
-              className="px-2.5 py-1 rounded-lg border text-xs font-medium capitalize transition-all cursor-pointer bg-stone-800 text-white border-stone-800"
+              onClick={() => handleFormatChange(f)}
+              className={`px-2.5 py-1 rounded-lg border text-xs font-medium capitalize transition-all cursor-pointer ${activeFormat === f
+                ? "bg-stone-800 text-white border-stone-800"
+                : "bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"
+                }`}
             >
-              {f === "" ? "All Formats" : f}
+              {f ? f : "All Formats"}
             </button>
           ))}
         </div>
