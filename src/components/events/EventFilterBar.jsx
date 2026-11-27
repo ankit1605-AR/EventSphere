@@ -46,6 +46,12 @@ export default function EventFilterBar() {
     updateParams({ search: "" });
   }
 
+  function handleSorting(e) {
+    const [sort, order] = e.target.value.split("_");
+    updateParams({ sort, order });
+  }
+
+
   async function fetchCategories() {
     setIsCategoriesLoading(true);
     try {
@@ -150,14 +156,16 @@ export default function EventFilterBar() {
         {/* Sorting Dropdown */}
         <div className="relative min-w-35">
           <select
+            onChange={handleSorting}
             name="sort"
             className="w-full px-3 py-2 text-xs font-medium rounded-xl bg-[#FAF9F5] border border-[#DDD9CE] focus:border-[#E65100] outline-none text-stone-800 appearance-none cursor-pointer"
           >
-            <option value="startDate_asc">Earliest First</option>
-            <option value="startDate_desc">Latest First</option>
+            <option value="startDate_asc">Soonest First</option>
+            <option value="startDate_desc">Furthest out</option>
             <option value="price_asc">Price: Low to High</option>
             <option value="price_desc">Price: High to Low</option>
             <option value="title_asc">Title: A – Z</option>
+            <option value="title_desc">Title: Z – A</option>
           </select>
           <ChevronDown className="text-stone-400 w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-xs" />
         </div>
