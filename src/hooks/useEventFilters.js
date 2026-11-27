@@ -69,6 +69,7 @@ export function useEventFilters() {
     );
   }, [filters]);
   function resetFilters() {
+    
     setSearchParams(new URLSearchParams());
   }
 
