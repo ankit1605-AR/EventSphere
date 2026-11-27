@@ -11,6 +11,7 @@ export function useEventFilters() {
       isPaid:
         isPaidParam === "true" ? true : isPaidParam === "false" ? false : "",
       category: searchParams.get("category") || "",
+      search: searchParams.get("search") || "",
     };
   }, [searchParams]);
 
@@ -32,12 +33,14 @@ export function useEventFilters() {
     if (filters.format) {
       params.set("format", filters.format);
     }
-
     if (filters.isPaid !== "") {
       params.set("isPaid", String(filters.isPaid));
     }
     if (filters.category) {
       params.set("category", String(filters.category));
+    }
+    if (filters.search) {
+      params.set("search", String(filters.search));
     }
     return params.toString();
   }
