@@ -57,9 +57,26 @@ export function useEventFilters() {
     return params.toString();
   }
 
+  const hasActiveFilters = useMemo(() => {
+    return Boolean(
+      filters.search ||
+      filters.category ||
+      filters.city !== "All" ||
+      filters.isPaid !== "" ||
+      filters.order !== "asc" ||
+      filters.sort !== "startDate" ||
+      filters.format,
+    );
+  }, [filters]);
+  function resetFilters() {
+    setSearchParams(new URLSearchParams());
+  }
+
   return {
     apiQueryString,
     updateParams,
     filters,
+    hasActiveFilters,
+    resetFilters,
   };
 }

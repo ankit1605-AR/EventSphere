@@ -1,7 +1,7 @@
 import { useDebounce } from "@/hooks/useDebounce";
 import { useEventFilters } from "@/hooks/useEventFilters";
 import api from "@/lib/axios";
-import { Calendar, Calendar1, ChevronDown, MapPin, Search, X } from "lucide-react";
+import { Calendar, Calendar1, ChevronDown, MapPin, RotateCcw, Search, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 const CITIES = [
@@ -20,7 +20,7 @@ const CITIES = [
 ];
 
 export default function EventFilterBar() {
-  const { updateParams, filters } = useEventFilters();
+  const { updateParams, filters, hasActiveFilters, resetFilters } = useEventFilters();
   const [categories, setCategories] = useState([]);
   const [isCategoriesLoading, setIsCategoriesLoading] = useState(true);
   const [searchVal, setSearchVal] = useState(filters.search)
@@ -171,13 +171,16 @@ export default function EventFilterBar() {
         </div>
 
         {/* Reset Filters CTA */}
-        <button
-          type="button"
-          className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 rounded-xl transition-colors shrink-0 cursor-pointer"
-        >
-          <span>🔄</span>
-          <span>Reset</span>
-        </button>
+        {hasActiveFilters && (
+          <button
+            type="button"
+            onClick={resetFilters}
+            className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 rounded-xl transition-colors shrink-0 cursor-pointer"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Reset</span>
+          </button>
+        )}
       </div>
 
       {/* Categories horizontal pill bar */}
