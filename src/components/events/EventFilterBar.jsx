@@ -7,6 +7,27 @@ export default function EventFilterBar() {
   const [categories, setCategories] = useState([]);
   const [isCategoriesLoading, setIsCategoriesLoading] = useState(true);
 
+  function searchEvent(query){ // api calls
+    console.log("searching...",query);
+  }
+
+  function debounce(fn,delay){
+    let timer;
+    return function abc(...args){ // rest oparator
+      clearTimeout(timer);//clear previous timer
+
+      timer = setTimeout(()=>{ 
+        fn(...args);// spread operator
+      },delay);
+    }
+  }
+  const debouncedSearch = debounce(searchEvent,1000);
+
+  debouncedSearch("r");
+  debouncedSearch("re");
+  debouncedSearch("rea");
+  debouncedSearch("reac");
+  debouncedSearch("react");
 
   function handleFormatChange(format) {
     updateParams({ format })
@@ -211,12 +232,13 @@ export default function EventFilterBar() {
               key={i}
               type="button"
               onClick={() => handleFormatChange(f)}
-              className={`px-2.5 py-1 rounded-lg border text-xs font-medium capitalize transition-all cursor-pointer ${activeFormat === f
-                ? "bg-stone-800 text-white border-stone-800"
-                : "bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"
-                }`}
+              className={`px-2.5 py-1 rounded-lg border text-xs font-medium capitalize transition-all cursor-pointer ${
+                activeFormat === f
+                  ? "bg-stone-800 text-white border-stone-800"
+                  : "bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"
+              }`}
             >
-              {f ? f : "All Formats"}
+              {f !== "" ? f : "All Formats"}
             </button>
           ))}
         </div>
@@ -226,30 +248,33 @@ export default function EventFilterBar() {
           <button
             type="button"
             onClick={() => handleIsPaid("")}
-            className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-all cursor-pointer ${filters.isPaid === "" || null
-              ? "bg-stone-800 text-white border-stone-800"
-              : "bg-white border-[#DDD9CE] text-stone-600"
-              }`}
+            className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-all cursor-pointer ${
+              filters.isPaid === "" || null
+                ? "bg-stone-800 text-white border-stone-800"
+                : "bg-white border-[#DDD9CE] text-stone-600"
+            }`}
           >
             All
           </button>
           <button
+            onClick={() => handleIsPaid(false)} // isPaid = false
             type="button"
-            onClick={() => handleIsPaid(false)} // isPaid == false
-            className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-all cursor-pointer ${filters.isPaid === false
-              ? "bg-emerald-700 text-white border-emerald-700"
-              : "bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"
-              }`}
+            className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-all cursor-pointer ${
+              filters.isPaid === false
+                ? "bg-emerald-700 text-white border-emerald-700"
+                : "bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"
+            }`}
           >
             Free
           </button>
           <button
+            onClick={() => handleIsPaid(true)} // isPaid = true
             type="button"
-            onClick={() => handleIsPaid(true)} // ispaid == true
-            className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-all cursor-pointer ${filters.isPaid === true
-              ? "bg-stone-800 text-white border-stone-800"
-              : "bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"
-              }`}
+            className={`px-2.5 py-1 rounded-lg border text-xs font-medium transition-all cursor-pointer ${
+              filters.isPaid === true
+                ? "bg-stone-800 text-white border-stone-800"
+                : "bg-white border-[#DDD9CE] text-stone-600 hover:bg-stone-50"
+            }`}
           >
             Paid
           </button>
