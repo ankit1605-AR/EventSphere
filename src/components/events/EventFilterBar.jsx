@@ -1,8 +1,23 @@
 import { useDebounce } from "@/hooks/useDebounce";
 import { useEventFilters } from "@/hooks/useEventFilters";
 import api from "@/lib/axios";
-import { Search, X } from "lucide-react";
+import { Calendar, Calendar1, ChevronDown, MapPin, Search, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+
+const CITIES = [
+  "All",
+  "Bengaluru",
+  "Mumbai",
+  "Delhi NCR",
+  "Pune",
+  "Hyderabad",
+  "Jaipur",
+  "Goa",
+  "Kolkata",
+  "Ahmedabad",
+  "Chennai",
+  "Chandigarh",
+];
 
 export default function EventFilterBar() {
   const { updateParams, filters } = useEventFilters();
@@ -22,6 +37,9 @@ export default function EventFilterBar() {
   function handleSearch(e) {
     e.preventDefault();
     updateParams({ search: searchVal.trim() });
+  }
+  function handleChangeCity(city) {
+    updateParams({ city: city === "All" ? "" : city });
   }
   function clearSearch() {
     setSearchVal("");
@@ -97,40 +115,35 @@ export default function EventFilterBar() {
 
         {/* City Filter */}
         <div className="relative min-w-37.5">
-          <span className="text-stone-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-xs">
-            📍
-          </span>
+          <MapPin className="text-stone-400 absolute w-4 h-4 left-3 top-1/2 -translate-y-1/2 pointer-events-none text-xs" />
           <select
+            value={filters.city}
             name="city"
+            onChange={(e) => handleChangeCity(e.target.value)}
             className="w-full pl-8 pr-7 py-2 text-xs font-medium rounded-xl bg-[#FAF9F5] border border-[#DDD9CE] focus:border-[#E65100] outline-none text-stone-800 appearance-none cursor-pointer"
           >
-            <option value="All">All Locations</option>
-            <option value="Bengaluru">Bengaluru</option>
-            <option value="Mumbai">Mumbai</option>
-            <option value="Delhi NCR">Delhi NCR</option>
-            <option value="Pune">Pune</option>
-            <option value="Hyderabad">Hyderabad</option>
-            <option value="Jaipur">Jaipur</option>
-            <option value="Goa">Goa</option>
-            <option value="Kolkata">Kolkata</option>
-            <option value="Ahmedabad">Ahmedabad</option>
-            <option value="Chennai">Chennai</option>
-            <option value="Chandigarh">Chandigarh</option>
+            {CITIES.map((city, i) => (
+              <option value={city} key={i}>
+                {city === "All" ? "All locations" : city}
+              </option>
+            ))}
+
+            {!CITIES.includes(filters.city) && (
+              <option value={filters.city}>{filters.city}</option>
+            )}
           </select>
-          <span className="text-stone-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-xs">
-            ▼
-          </span>
+          <ChevronDown className="text-stone-400 w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-xs" />
         </div>
 
         {/* Date Filter */}
-        <div className="relative">
+        <div className="relative min-w-35">
           <button
             type="button"
-            className="flex items-center gap-2 px-3 py-2 text-xs font-medium rounded-xl border transition-all cursor-pointer select-none bg-[#FAF9F5] border-[#DDD9CE] text-stone-700 hover:bg-stone-100"
+            className=" w-full flex items-center gap-2 px-3 py-2 text-xs font-medium rounded-xl border transition-all cursor-pointer select-none bg-[#FAF9F5] border-[#DDD9CE] text-stone-700 hover:bg-stone-100"
           >
-            <span>📅</span>
-            <span>Filter by Date</span>
-            <span className="text-stone-400 text-xs">▼</span>
+            <Calendar className="text-stone-400 w-4 h-4 absolute  left-3 top-1/2 -translate-y-1/2 pointer-events-none text-xs" />
+            <span className="pl-8 pr-7">Filter by Date</span>
+            <ChevronDown className="text-stone-400 w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-xs" />
           </button>
         </div>
 
@@ -146,9 +159,7 @@ export default function EventFilterBar() {
             <option value="price_desc">Price: High to Low</option>
             <option value="title_asc">Title: A – Z</option>
           </select>
-          <span className="text-stone-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-xs">
-            ▼
-          </span>
+          <ChevronDown className="text-stone-400 w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-xs" />
         </div>
 
         {/* Reset Filters CTA */}
